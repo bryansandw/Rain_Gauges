@@ -1,0 +1,140 @@
+## Prepare rain gauge table for use in arc
+
+# Import arcpy module
+import arcpy
+from arcpy import env
+
+# set workspace
+arcpy.env.overwriteOutput = True
+work_space = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges'
+
+# Hard code of input tables
+GolfCourse = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\GolfCourse_Hour.txt' #xy
+Plant1 = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Plant 1_Hour.txt'
+Luza = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Luza 3_Hour.txt' #xy
+LiftStation = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\LiftStation158_Hour.txt' #xy
+Burgess = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Burgess LS_Hour.txt'
+LSPS = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\LSPS_Weather_Hour.txt'
+
+# output table
+out = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Hour_xy.txt'
+out1 = open(out, 'w')
+
+# Create Headers in Output Text File
+out1.write("X"+',')
+out1.write("Y"+',')
+out1.write("TIMESTAMP"+',')
+out1.write("RECORD"+',')
+out1.write("BattV_Min"+',')
+out1.write("BattV_Max"+',')
+out1.write("Rain_in_Tot"+'\n')
+
+
+#GolfCourse
+x = '3545415' 
+y = '10218330' 
+
+with open(GolfCourse, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+#Plant1
+x = '3557931' 
+y = '10219830' 
+
+with open(Plant1, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+#Luza
+x = '3546713' 
+y = '10227320' 
+
+with open(Luza, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+#LiftStation 158
+x = '3558420' 
+y = '10230450' 
+
+with open(LiftStation, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+#Burgess
+x = '3538420' 
+y = '10203200' 
+
+with open(Burgess, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+#LSPS
+x = '3529213' 
+y = '10245470' 
+
+with open(LSPS, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+out1.close()
+
+#create point
+# Local variables:
+Hour_xy_Layer = "GolfCourse_Hour_xy_Layer"
+shp = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Hour_xy.shp'
+
+# Process: Make XY Event Layer
+arcpy.MakeXYEventLayer_management(out, "x", "y", Hour_xy_Layer, "{B286C06B-0879-11D2-AACA-00C04FA33C20};IsHighPrecision", "")
+
+# Process: Copy Features
+arcpy.CopyFeatures_management(Hour_xy_Layer, shp, "", "0", "0", "0")
