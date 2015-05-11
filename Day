@@ -1,0 +1,160 @@
+## Prepare rain gauge table for use in arc
+## need to add x and y  
+
+# Import arcpy module
+import arcpy
+from arcpy import env
+
+# set workspace
+arcpy.env.overwriteOutput = True
+work_space = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges'
+
+# input tables
+GolfCourse = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\GolfCourse_Daily.txt' #xy
+Plant1 = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Plant 1_Daily.txt'
+Luza = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Luza 3_Daily.txt' #xy
+LiftStation = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\LiftStation158_Daily.txt' #xy
+Burgess = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Burgess LS_Daily.txt'
+LSPS = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\LSPS Weather_Daily.txt'
+
+# output table
+out = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Daily_xy.txt'
+out1 = open(out, 'w')
+
+# Create Headers in Output Text File
+out1.write("X"+',')
+out1.write("Y"+',')
+out1.write("TIMESTAMP"+',')
+out1.write("RECORD"+',')
+out1.write("BattV_Min"+',')
+#out1.write("BattV_Max"+',')
+out1.write("Rain_in_Tot"+'\n')
+
+
+#GolfCourse
+x = '3545415' 
+y = '10218330' 
+print 'GolfCourse'
+with open(GolfCourse, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+#Plant1
+x = '3557931' 
+y = '10219830' 
+print "Plant 1"
+with open(Plant1, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+'''#Luza
+x = '3546713' 
+y = '10227320' 
+print 'Luza'
+with open(Luza, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+'''
+#LiftStation 158
+x = '3558420' 
+y = '10230450' 
+print 'LiftStation 158'
+with open(LiftStation, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+
+'''#Burgess
+x = '3538420' 
+y = '10203200' 
+print 'Burgess'
+with open(Burgess, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line
+        str = line
+        out1.write( x + ',' + y + ',' + str)
+f.close()
+'''
+#LSPS
+x = '3529213' 
+y = '10245470' 
+print 'LSPS'
+with open(LSPS, "r") as f:
+# skip header line -- 3 line
+    next(f)
+    next(f)
+    next(f)
+    next(f)
+    for line in f:
+        print line.split(',');
+        str = line.split(',');
+#		rain = str[4].split('\n');
+        out1.write( x + ',' + y + ',' + str[0] + ',' + str[1] + ',' + str[2] + ',' + str[4] )
+f.close()
+
+out1.close()
+
+#create point
+# Local variables:
+Daily_xy = out
+Daily_xy_Layer = "Daily_xy_Layer"
+Daily_xy__5_ = "Daily_xy"
+Daily_xy__4_ = "Daily_xy"
+Daily_xy__3_ = "Daily_xy"
+Daily_xy_2_shp = "G:\\GIS_PROJECTS\\WATER_SERVICES\\Rain_Gauges\\Daily_xy.shp"
+
+shp = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Daily_xy.shp'
+
+# Process: Make XY Event Layer
+arcpy.MakeXYEventLayer_management(out, "x", "y", Daily_xy_Layer, "{B286C06B-0879-11D2-AACA-00C04FA33C20};IsHighPrecision", "")
+
+# Process: Copy Features
+arcpy.CopyFeatures_management(Daily_xy_Layer, shp, "", "0", "0", "0")
+
+# Process: Add Field
+arcpy.AddField_management(Daily_xy_Layer, "Rain_Tot", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+
+# Process: Calculate Field
+arcpy.CalculateField_management(Daily_xy__5_, "Rain_Tot", "[BattV_Max]", "VB", "")
+
+# Process: Delete Field
+arcpy.DeleteField_management(Daily_xy__4_, "BattV_Max")
+
+# Process: Copy Features
+arcpy.CopyFeatures_management(Daily_xy__3_, Daily_xy_2_shp, "", "0", "0", "0")
