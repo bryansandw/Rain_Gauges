@@ -1,5 +1,5 @@
 ## Prepare rain gauge table for use in arc
-## need to add x and y  
+## x and y for NAD_1983_StatePlane_Texas_Central_FIPS_4203_Feet,  Projection: Lambert_Conformal_Conic
 
 # Import arcpy module
 import arcpy
