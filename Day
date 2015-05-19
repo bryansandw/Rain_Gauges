@@ -27,7 +27,7 @@ out1.write("Y"+',')
 out1.write("TIMESTAMP"+',')
 out1.write("RECORD"+',')
 out1.write("BattV_Min"+',')
-#out1.write("BattV_Max"+',')
+#out1.write("BattV_Max"+',') Doesn't show up in the txt file, but still shows up in the shape file... not sure why
 out1.write("Rain_in_Tot"+'\n')
 
 
@@ -132,29 +132,28 @@ out1.close()
 
 #create point
 # Local variables:
-Daily_xy = out
+Daily_xy_txt = "G:\\GIS_PROJECTS\\WATER_SERVICES\\Rain_Gauges\\Daily_xy.txt"
 Daily_xy_Layer = "Daily_xy_Layer"
-Daily_xy__5_ = "Daily_xy"
-Daily_xy__4_ = "Daily_xy"
-Daily_xy__3_ = "Daily_xy"
-Daily_xy_2_shp = "G:\\GIS_PROJECTS\\WATER_SERVICES\\Rain_Gauges\\Daily_xy.shp"
-
-shp = r'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges\Daily_xy.shp'
+Daily_xy_Layer_shp = "G:\\GIS_PROJECTS\\WATER_SERVICES\\Rain_Gauges\\Daily_xy_Layer.shp"
+Daily_xy_Layer_shp__2_ = "G:\\GIS_PROJECTS\\WATER_SERVICES\\Rain_Gauges\\Daily_xy_Layer.shp"
+Daily_xy_Layer_shp__4_ = "G:\\GIS_PROJECTS\\WATER_SERVICES\\Rain_Gauges\\Daily_xy_Layer.shp"
+Daily_xy_Layer_shp__3_ = "G:\\GIS_PROJECTS\\WATER_SERVICES\\Rain_Gauges\\Daily_xy_Layer.shp"
+Daily_xy_2_shp = "G:\\GIS_PROJECTS\\WATER_SERVICES\\Rain_Gauges\\Daily_xy_2.shp"
 
 # Process: Make XY Event Layer
-arcpy.MakeXYEventLayer_management(out, "x", "y", Daily_xy_Layer, "{B286C06B-0879-11D2-AACA-00C04FA33C20};IsHighPrecision", "")
+arcpy.MakeXYEventLayer_management(Daily_xy_txt, "x", "y", Daily_xy_Layer, "PROJCS['NAD_1983_StatePlane_Texas_Central_FIPS_4203_Feet',GEOGCS['GCS_North_American_1983',DATUM['D_North_American_1983',SPHEROID['GRS_1980',6378137.0,298.257222101]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Lambert_Conformal_Conic'],PARAMETER['False_Easting',2296583.333333333],PARAMETER['False_Northing',9842500.0],PARAMETER['Central_Meridian',-100.3333333333333],PARAMETER['Standard_Parallel_1',30.11666666666667],PARAMETER['Standard_Parallel_2',31.88333333333333],PARAMETER['Latitude_Of_Origin',29.66666666666667],UNIT['Foot_US',0.3048006096012192]];-124805500 -81923100 3048.00609601219;-100000 10000;-100000 10000;3.28083333333333E-03;0.001;0.001;IsHighPrecision", "")
 
 # Process: Copy Features
-arcpy.CopyFeatures_management(Daily_xy_Layer, shp, "", "0", "0", "0")
+arcpy.CopyFeatures_management(Daily_xy_Layer, Daily_xy_Layer_shp, "", "0", "0", "0")
 
 # Process: Add Field
-arcpy.AddField_management(Daily_xy_Layer, "Rain_Tot", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+arcpy.AddField_management(Daily_xy_Layer_shp, "Rain_Tot", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
 
 # Process: Calculate Field
-arcpy.CalculateField_management(Daily_xy__5_, "Rain_Tot", "[BattV_Max]", "VB", "")
+arcpy.CalculateField_management(Daily_xy_Layer_shp__2_, "Rain_Tot", "!BattV_Max!", "PYTHON_9.3", "")
 
 # Process: Delete Field
-arcpy.DeleteField_management(Daily_xy__4_, "BattV_Max")
+arcpy.DeleteField_management(Daily_xy_Layer_shp__4_, "BattV_Max")
 
-# Process: Copy Features
-arcpy.CopyFeatures_management(Daily_xy__3_, Daily_xy_2_shp, "", "0", "0", "0")
+# Process: Copy Features (2)
+arcpy.CopyFeatures_management(Daily_xy_Layer_shp__3_, Daily_xy_2_shp, "", "0", "0", "0")
