@@ -1,5 +1,5 @@
 ## Prepare rain gauge table for use in arc
-## x and y for NAD_1983_StatePlane_Texas_Central_FIPS_4203_Feet,  Projection: Lambert_Conformal_Conic
+## need to add x and y  
 
 # Import arcpy module
 import arcpy
@@ -24,10 +24,11 @@ out1 = open(out, 'w')
 # Create Headers in Output Text File
 out1.write("X"+',')
 out1.write("Y"+',')
+out1.write("Rain_Gauge"+',')
 out1.write("TIMESTAMP"+',')
 out1.write("RECORD"+',')
 out1.write("BattV_Min"+',')
-#out1.write("BattV_Max"+',') Doesn't show up in the txt file, but still shows up in the shape file... not sure why
+#out1.write("BattV_Max"+',')
 out1.write("Rain_in_Tot"+'\n')
 
 
@@ -44,7 +45,7 @@ with open(GolfCourse, "r") as f:
     for line in f:
         print line
         str = line
-        out1.write( x + ',' + y + ',' + str)
+        out1.write( x + ',' + y + ',' + 'GolfCourse,' + str)
 f.close()
 
 #Plant1
@@ -60,10 +61,10 @@ with open(Plant1, "r") as f:
     for line in f:
         print line
         str = line
-        out1.write( x + ',' + y + ',' + str)
+        out1.write( x + ',' + y + ',' + 'Plant 1,' + str)
 f.close()
 
-'''#Luza
+#Luza
 x = '3546713' 
 y = '10227320' 
 print 'Luza'
@@ -76,9 +77,9 @@ with open(Luza, "r") as f:
     for line in f:
         print line
         str = line
-        out1.write( x + ',' + y + ',' + str)
+        out1.write( x + ',' + y + ',' + 'Luza 3,' + str)
 f.close()
-'''
+
 #LiftStation 158
 x = '3558420' 
 y = '10230450' 
@@ -92,12 +93,12 @@ with open(LiftStation, "r") as f:
     for line in f:
         print line
         str = line
-        out1.write( x + ',' + y + ',' + str)
+        out1.write( x + ',' + y + ',' + 'Lift Station 158,'+ str)
 f.close()
 
-'''#Burgess
-x = '3538420' 
-y = '10203200' 
+#Burgess
+x = '3539257' 
+y = '10201728' 
 print 'Burgess'
 with open(Burgess, "r") as f:
 # skip header line -- 3 line
@@ -108,9 +109,9 @@ with open(Burgess, "r") as f:
     for line in f:
         print line
         str = line
-        out1.write( x + ',' + y + ',' + str)
+        out1.write( x + ',' + y + ',' + 'Burgess,' + str)
 f.close()
-'''
+
 #LSPS
 x = '3529213' 
 y = '10245470' 
@@ -125,7 +126,7 @@ with open(LSPS, "r") as f:
         print line.split(',');
         str = line.split(',');
 #		rain = str[4].split('\n');
-        out1.write( x + ',' + y + ',' + str[0] + ',' + str[1] + ',' + str[2] + ',' + str[4] )
+        out1.write( x + ',' + y + ',' + 'LSPS,' + str[0] + ',' + str[1] + ',' + str[2] + ',' + str[4] )
 f.close()
 
 out1.close()
