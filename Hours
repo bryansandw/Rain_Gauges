@@ -1,6 +1,6 @@
 #############################################################################
 # Name: Elizabeth Rentschlar                                                #
-# Assistantce from: Steven B.
+# Assistantce from: Steven B.                                               #
 # Purpose: Condense Minute rain gauge readings in to hourly readings and    #
 #         merge into one text file that can then be used in the GIS         #
 # Created: 12/16/15                                                         #
