@@ -43,12 +43,6 @@ Hour_xy_Layer = "Minute_xy_Layer"
 shp = './Minute_xy.shp'
 Hour_xy = './Minute_xy.shp'
 
-#### I should try and get rid of these at some point
-Hour_xy__2_ = './Minute_xy.shp'
-Hour_xy__4_ = './Minute_xy.shp'
-Hour_xy__3_ = './Minute_xy.shp'
-Hour_xy_Layer_shp = './Minute_xy_Layer.shp'
-
 # Variable for while loop
 i = 0
 
@@ -58,7 +52,7 @@ while i < len(table_list):
     	# read the lines and skip 4 line header
         lines = f.readlines()[4:] 
 
-		# need a local variable
+	# need a local variable
         last_date = ""
         minute = 0
         last_hour = 99
@@ -75,12 +69,8 @@ while i < len(table_list):
                 last_hour = hour
                 minute +=  1
                 if minute == 60:
-    				#print "Date is: " + date
-					#print "Hour is: " + hour
-					#print "Rain is: " + str(rain)
                     minute = 0
                     rain_string = str(rain)
-					#print rain_string
                     out1.write( x_and_y[i] + ',' + date + ' ' + hour + 
                         ':00:00"' + ',' + rain_string + '\n')
 
@@ -103,6 +93,6 @@ with open(LSPS, "r") as f:
     for line in lines:
         #print line.split(',');
         item = line.split(',');
-#		rain = item[4].split('\n');
+        #rain = item[4].split('\n');
         out1.write( x + ',' + y + ',' + item[0] + ',' + item[14] )
 out1.close()
