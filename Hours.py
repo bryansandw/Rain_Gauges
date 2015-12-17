@@ -16,81 +16,75 @@ arcpy.env.overwriteOutput = True
 work_space = 'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges'
 
 # input tables
-GolfCourse = './GolfCourse_Minute.txt' 
+GolfCourse = './GolfCourse_Minute.txt'
 Plant1 = './Plant 1_Minute.txt'
-Luza = './Luza 3_Minute.txt' 
+Luza = './Luza 3_Minute.txt'
 LiftStation = './LiftStation158_Minute.txt'
 Burgess = './Burgess LS_Minute.txt'
 LSPS = './LSPS Weather_Hour.txt'
 
 table_list = [GolfCourse, Plant1, Luza, LiftStation, Burgess]
-x_and_y = ['3545415,10218330', '3557931,10219830', '3546713,10227320', 
-           '3558420,10230450', '3538420,10203200']
+xPos = ['3545415', '3557931', '3546713', '3558420', '3538420']
+yPos = ['10218330', '10219830', '10227320', '10230450', '10203200']
 print_list = ["GolfCourse", "Plant1", "Luza", "LiftStation", "Burgess"]
 
-# output table
-out = './Hours_xy.txt'
-out1 = open(out, 'w')
+with open(r'./Hours_xy.txt', 'w') as outFile:
 
-# Create Headers in Output Text File
-out1.write("X"+',')
-out1.write("Y"+',')
-out1.write("TIMESTAMP"+',')
-out1.write("Rain_in_Tot"+'\n')
+    # Create Headers in Output Text File
+    outFile.write("X,Y,TIMESTAMP,Rain_in_Tot\n")
 
-# Create point
-# Local variables:
-Hour_xy_Layer = "Minute_xy_Layer"
-shp = './Minute_xy.shp'
-Hour_xy = './Minute_xy.shp'
+    # Create point
+    # Local variables: UNUSED!!!!!
+    #Hour_xy_Layer = "Minute_xy_Layer"
+    #shp = r'./Minute_xy.shp'
+    #Hour_xy = r'./Minute_xy.shp'
 
-# Variable for while loop
-i = 0
+    for f, x, y, station in zip(table_list, xPos, yPos, print_list):
+        print 'Starting on', station
+        with open(f, "r") as f:
+            # read the lines and skip 4 line header
+            lines = f.readlines()[4:]
 
-while i < len(table_list):
+            # need a local variable
+            last_date = ""
+            minute = 0
+            last_hour = 99
+            rain = 0.00
 
-    with open(table_list[i], "r") as f:
-    	# read the lines and skip 4 line header
-        lines = f.readlines()[4:] 
+            for line in lines:
+                items  = line.split(',')
+                date, clock = items[0].split()
+                hour = clock.split(":")[0]
 
-	# need a local variable
-        last_date = ""
-        minute = 0
-        last_hour = 99
-        rain = 0.00
-    
-        for line in lines:
-            items  = line.split(',') 
-            date, clock = items[0].split()
-            hour = clock.split(":")[0]
+                if hour == last_hour:
+                    rain_str = items[2]
+                    rain += float(rain_str)
+                    last_hour = hour
+                    minute +=  1
+                    if minute == 60:
+                        #print "Date is: " + date
+                        #print "Hour is: " + hour
+                        #print "Rain is: " + str(rain)
+                        minute = 0
+                        rain_string = str(rain)
+                        #print rain_string
+                        outFile.write( x + ',' + y + ',' + date + ' ' + hour +
+                            ':00:00"' + ',' + rain_string + '\n')
 
-            if hour == last_hour:
-                rain_str = items[2]
-                rain += float(rain_str)
-                last_hour = hour
-                minute +=  1
-                if minute == 60:
-                    minute = 0
-                    rain_string = str(rain)
-                    out1.write( x_and_y[i] + ',' + date + ' ' + hour + 
-                        ':00:00"' + ',' + rain_string + '\n')
-
-            else:
-                minute = 1
-                last_hour = clock.split(":")[0]
-                rain_str = items[2]
-                rain = float(rain_str)
-        print print_list[i]
-        i += 1
+                else:
+                    minute = 1
+                    last_hour = clock.split(":")[0]
+                    rain_str = items[2]
+                    rain = float(rain_str)
 
 #LSPS
-x = '3528380' 
-y = '10245400' 
-print 'Starting on LSPS' 
+x = '3528380'
+y = '10245400'
+print 'Starting on LSPS'
 
 with open(LSPS, "r") as f:
     # read the lines and skip 4 line header
-    lines = f.readlines()[4:] 
+    lines = f.readlines()[4:]
     for line in lines:
         #print line.split(',');
         item = line.split(',');
