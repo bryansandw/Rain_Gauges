@@ -1,3 +1,4 @@
+
 #############################################################################
 # Name: Elizabeth Rentschlar                                                #
 # Assistantce from: Steven B.                                               #
@@ -62,12 +63,8 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
                     last_hour = hour
                     minute +=  1
                     if minute == 60:
-                        #print "Date is: " + date
-                        #print "Hour is: " + hour
-                        #print "Rain is: " + str(rain)
                         minute = 0
                         rain_string = str(rain)
-                        #print rain_string
                         outFile.write( x + ',' + y + ',' + date + ' ' + hour +
                             ':00:00"' + ',' + rain_string + '\n')
 
@@ -77,17 +74,15 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
                     rain_str = items[2]
                     rain = float(rain_str)
 
-#LSPS
-x = '3528380'
-y = '10245400'
-print 'Starting on LSPS'
+    #LSPS
+    x = '3528380'
+    y = '10245400'
+    print 'Starting on LSPS'
 
-with open(LSPS, "r") as f:
-    # read the lines and skip 4 line header
-    lines = f.readlines()[4:]
-    for line in lines:
-        #print line.split(',');
-        item = line.split(',');
-        #rain = item[4].split('\n');
-        out1.write( x + ',' + y + ',' + item[0] + ',' + item[14] )
-out1.close()
+    with open(LSPS, "r") as f:
+        # read the lines and skip 4 line header
+        lines = f.readlines()[4:]
+        for line in lines:
+            item = line.split(',');
+            outFile.write( x + ',' + y + ',' + item[0] + ',' + item[14] )
+
