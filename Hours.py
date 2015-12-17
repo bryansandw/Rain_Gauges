@@ -1,9 +1,8 @@
-
 #############################################################################
 # Name: Elizabeth Rentschlar                                                #
-# Assistantce from: Steven B.                                               #
-# Purpose: Condense Minute rain gauge readings in to hourly readings and    #
-#         merge into one text file that can then be used in the GIS         #
+# Assistantce from: S. Boada                                                #
+# Purpose: Condense minute rain gauge readings in to hourly readings and    #
+#          merge into one text file that can then be used in the GIS        #
 # Created: 12/16/15                                                         #
 # Copyright: (c) City of Bryan                                              #
 # ArcGIS Version: 10.2.2                                                    #
@@ -16,6 +15,19 @@ import arcpy
 arcpy.env.overwriteOutput = True
 work_space = 'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges'
 
+# FOR GIS 
+# Create point
+# Local variables: 
+#Hour_xy_Layer = "Minute_xy_Layer"
+out_shp = './Hour_xy.shp'
+
+prjfile = './NAD 1983 StatePlane Texas Central FIPS 4203 (US Feet).prj'
+spatialref =  arcpy.SpatialReference(prjfile)
+
+
+#Hour_xy = r'./Minute_xy.shp'
+'''
+#### Formating the rain data for use in the GIS ####
 # input tables
 GolfCourse = './GolfCourse_Minute.txt'
 Plant1 = './Plant 1_Minute.txt'
@@ -33,12 +45,6 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
 
     # Create Headers in Output Text File
     outFile.write("X,Y,TIMESTAMP,Rain_in_Tot\n")
-
-    # Create point
-    # Local variables: UNUSED!!!!!
-    #Hour_xy_Layer = "Minute_xy_Layer"
-    #shp = r'./Minute_xy.shp'
-    #Hour_xy = r'./Minute_xy.shp'
 
     for f, x, y, station in zip(table_list, xPos, yPos, print_list):
         print 'Starting on', station
@@ -74,9 +80,9 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
                     rain_str = items[2]
                     rain = float(rain_str)
 
-    #LSPS
-    x = '3528380'
-    y = '10245400'
+    #LSPS is in an hour format already
+    x = '3529217'
+    y = '10245474'
     print 'Starting on LSPS'
 
     with open(LSPS, "r") as f:
@@ -85,4 +91,37 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
         for line in lines:
             item = line.split(',');
             outFile.write( x + ',' + y + ',' + item[0] + ',' + item[14] )
+'''
+#### Converting the rain data into a point shapefile ####
 
+hour_shp = arcpy.management.CreateFeatureclass(work_space, out_shp, 'POINT', '', '', '', spatialref)
+
+arcpy.AddField_management(hour_shp,"Day", "TEXT", "", "", "", "",
+    "NULLABLE","NON_REQUIRED","")
+arcpy.AddField_management(hour_shp,"Hour", "TEXT", "", "", "", "",
+    "NULLABLE","NON_REQUIRED","")
+arcpy.AddField_management(hour_shp,"Rain_Total", "FLOAT", "", "", "", "",
+    "NULLABLE","NON_REQUIRED","")
+
+with open(r'./Hours_xy.txt', 'r') as inFile:
+    # variable 
+	
+    in_cur = arcpy.da.InsertCursor(hour_shp, ['SHAPE@', 'Day', 'Hour', 'Rain_Total'])
+
+    pnt = arcpy.Point()
+    #ary = arcpy.Array()
+	# skip header
+    next(inFile)
+	
+	# Goes through the txt file that was just created and uses the data 
+    # to create a point shapefile
+    for line in inFile:
+        rln = line.split(',')
+        pnt.X = int(rln[0])
+        pnt.Y = int(rln[1])
+        day = rln[2][1:11]
+        hour = rln[2][12:14]
+        in_cur.insertRow((pnt, day, hour,rln[3]))
+    
+del in_cur
+print 'done'
