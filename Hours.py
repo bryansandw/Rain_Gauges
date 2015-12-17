@@ -18,15 +18,10 @@ work_space = 'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges'
 # FOR GIS 
 # Create point
 # Local variables: 
-#Hour_xy_Layer = "Minute_xy_Layer"
 out_shp = './Hour_xy.shp'
-
 prjfile = './NAD 1983 StatePlane Texas Central FIPS 4203 (US Feet).prj'
 spatialref =  arcpy.SpatialReference(prjfile)
 
-
-#Hour_xy = r'./Minute_xy.shp'
-'''
 #### Formating the rain data for use in the GIS ####
 # input tables
 GolfCourse = './GolfCourse_Minute.txt'
@@ -91,11 +86,13 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
         for line in lines:
             item = line.split(',');
             outFile.write( x + ',' + y + ',' + item[0] + ',' + item[14] )
-'''
+
 #### Converting the rain data into a point shapefile ####
+# Create the feature class
+hour_shp = arcpy.management.CreateFeatureclass(work_space, out_shp, 'POINT',
+   '', '', '', spatialref)
 
-hour_shp = arcpy.management.CreateFeatureclass(work_space, out_shp, 'POINT', '', '', '', spatialref)
-
+# add Day, Hour, and Rain Total fields
 arcpy.AddField_management(hour_shp,"Day", "TEXT", "", "", "", "",
     "NULLABLE","NON_REQUIRED","")
 arcpy.AddField_management(hour_shp,"Hour", "TEXT", "", "", "", "",
@@ -103,17 +100,15 @@ arcpy.AddField_management(hour_shp,"Hour", "TEXT", "", "", "", "",
 arcpy.AddField_management(hour_shp,"Rain_Total", "FLOAT", "", "", "", "",
     "NULLABLE","NON_REQUIRED","")
 
-with open(r'./Hours_xy.txt', 'r') as inFile:
+with open('./Hours_xy.txt', 'r') as inFile:
     # variable 
-	
-    in_cur = arcpy.da.InsertCursor(hour_shp, ['SHAPE@', 'Day', 'Hour', 'Rain_Total'])
-
+    in_cur = arcpy.da.InsertCursor(hour_shp, 
+         ['SHAPE@', 'Day', 'Hour', 'Rain_Total'])
     pnt = arcpy.Point()
-    #ary = arcpy.Array()
-	# skip header
+    # skip header
     next(inFile)
 	
-	# Goes through the txt file that was just created and uses the data 
+    # Goes through the txt file that was just created and uses the data 
     # to create a point shapefile
     for line in inFile:
         rln = line.split(',')
