@@ -24,7 +24,8 @@ Burgess = './Burgess LS_Minute.txt'
 LSPS = './LSPS Weather_Hour.txt'
 
 table_list = [GolfCourse, Plant1, Luza, LiftStation, Burgess]
-x_and_y = ['3545415,10218330', '3557931,10219830', '3546713,10227320', '3558420,10230450', '3538420,10203200']
+x_and_y = ['3545415,10218330', '3557931,10219830', '3546713,10227320', 
+           '3558420,10230450', '3538420,10203200']
 print_list = ["GolfCourse", "Plant1", "Luza", "LiftStation", "Burgess"]
 
 # output table
