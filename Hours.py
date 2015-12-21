@@ -18,9 +18,14 @@ work_space = 'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges'
 # FOR GIS 
 # Create point
 # Local variables: 
+#Hour_xy_Layer = "Minute_xy_Layer"
 out_shp = './Hour_xy.shp'
+
 prjfile = './NAD 1983 StatePlane Texas Central FIPS 4203 (US Feet).prj'
 spatialref =  arcpy.SpatialReference(prjfile)
+
+
+#Hour_xy = r'./Minute_xy.shp'
 
 #### Formating the rain data for use in the GIS ####
 # input tables
@@ -88,35 +93,39 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
             outFile.write( x + ',' + y + ',' + item[0] + ',' + item[14] )
 
 #### Converting the rain data into a point shapefile ####
-# Create the feature class
-hour_shp = arcpy.management.CreateFeatureclass(work_space, out_shp, 'POINT',
-   '', '', '', spatialref)
 
-# add Day, Hour, and Rain Total fields
-arcpy.AddField_management(hour_shp,"Day", "TEXT", "", "", "", "",
+hour_shp = arcpy.management.CreateFeatureclass(work_space, out_shp, 'POINT',
+    '', '', '', spatialref)
+
+arcpy.AddField_management(hour_shp,"Day", "DATE", "", "", "", "",
     "NULLABLE","NON_REQUIRED","")
-arcpy.AddField_management(hour_shp,"Hour", "TEXT", "", "", "", "",
+# Might be better as int
+arcpy.AddField_management(hour_shp,"Hour", "SHORT", "", "", "", "",
     "NULLABLE","NON_REQUIRED","")
 arcpy.AddField_management(hour_shp,"Rain_Total", "FLOAT", "", "", "", "",
     "NULLABLE","NON_REQUIRED","")
 
-with open('./Hours_xy.txt', 'r') as inFile:
+with open(r'./Hours_xy.txt', 'r') as inFile:
     # variable 
+	
     in_cur = arcpy.da.InsertCursor(hour_shp, 
-         ['SHAPE@', 'Day', 'Hour', 'Rain_Total'])
+        ['SHAPE@', 'Day', 'Hour', 'Rain_Total'])
+
     pnt = arcpy.Point()
-    # skip header
+    #ary = arcpy.Array()
+	# skip header
     next(inFile)
 	
-    # Goes through the txt file that was just created and uses the data 
+	# Goes through the txt file that was just created and uses the data 
     # to create a point shapefile
     for line in inFile:
         rln = line.split(',')
         pnt.X = int(rln[0])
         pnt.Y = int(rln[1])
-        day = rln[2][1:11]
-        hour = rln[2][12:14]
-        in_cur.insertRow((pnt, day, hour,rln[3]))
+        date = rln[2][1:11]
+        day = date + ' 12:00:00 PM'
+        hour = int(rln[2][12:14])
+        in_cur.insertRow((pnt, day, hour, rln[3]))
     
 del in_cur
 print 'done'
