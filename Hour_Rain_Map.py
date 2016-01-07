@@ -1,143 +1,148 @@
 #############################################################################
 # Name: Elizabeth Rentschlar                                                #
-# Assistantce from: S. Boada                                                #
-# Purpose: Condense minute rain gauge readings in to hourly readings and    #
-#          merge into one text file that can then be used in the GIS        #
-# Created: 12/16/15                                                         #
+# Assistantce from:                                                         #
+# Purpose: Use Hourly rain totals condensed in Hours.py to create a series  #
+#          of maps that show the                                            #
+# Created: 12/21/15                                                         #
 # Copyright: (c) City of Bryan                                              #
 # ArcGIS Version: 10.2.2                                                    #
 # Python Version: 2.7                                                       #
 #############################################################################
 #Import arcpy module
 import arcpy
+import datetime
+import os
 
 # set workspace
 arcpy.env.overwriteOutput = True
-work_space = 'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges'
+work_space = 'G:/GIS_PROJECTS/WATER_SERVICES/Rain_Gauges'
+map_doc = work_space + '/Rain_Guage_Map.mxd'
 
-# FOR GIS 
-# Create point
-# Local variables: 
-#Hour_xy_Layer = "Minute_xy_Layer"
-out_shp = './Hour_xy.shp'
-
-prjfile = './NAD 1983 StatePlane Texas Central FIPS 4203 (US Feet).prj'
-spatialref =  arcpy.SpatialReference(prjfile)
+hours_xy = work_space + '/Hour_xy.shp'
+hour_shp = work_space + '/hour.shp'
 
 
-#Hour_xy = r'./Minute_xy.shp'
+#data_frame = arcpy.mapping.ListDataFrames(my_mapdoc)[0]
+#print data_frame.name
+#print data_frame.scale
+#legend = arcpy.mapping.ListLayoutElements(my_mapdoc, "LEGEND_ELEMENT", 
+#        "Legend")[0] 
 
-#### Formating the rain data for use in the GIS ####
-# input tables
-GolfCourse = './GolfCourse_Minute.txt'
-Plant1 = './Plant 1_Minute.txt'
-Luza = './Luza 3_Minute.txt'
-LiftStation = './LiftStation158_Minute.txt'
-Burgess = './Burgess LS_Minute.txt'
-LSPS = './LSPS Weather_Hour.txt'
+hours = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+dates = []
+one_day = datetime.timedelta(days = 1)
 
-table_list = [GolfCourse, Plant1, Luza, LiftStation, Burgess]
-xPos = ['3545415', '3557931', '3546713', '3558420', '3538420']
-yPos = ['10218330', '10219830', '10227320', '10230450', '10203200']
-print_list = ["GolfCourse", "Plant1", "Luza", "LiftStation", "Burgess"]
+def assure_path_exists(my_path):
+        dir = os.path.dirname(my_path)
+        if not os.path.exists(dir):
+                os.mkdir(dir)
 
-with open(r'./Hours_xy.txt', 'w') as outFile:
+print "Do you wish to produce maps for all of the hours since Sep 24th, 2014?"
+print "Please answer Yes or No."
 
-    # Create Headers in Output Text File
-    outFile.write("X,Y,TIMESTAMP,Rain_in_Tot\n")
-
-    for f, x, y, station in zip(table_list, xPos, yPos, print_list):
-        print 'Starting on', station
-        with open(f, "r") as f:
-            # read the lines and skip 4 line header
-            lines = f.readlines()[4:]
-
-            # need a local variable
-            last_date = ""
-            minute = 1
-            last_hour = 99
-            rain = 0.00
-
-            for line in lines:
-                items  = line.split(',')
-                date, clock = items[0].split()
-				#I am worried that this is the wrong way to han
-                if int(clock.split(":")[0]) != 24:
-                    hour = int(clock.split(":")[0])
-                else:
-				# This is miss handling the last minute of the day by 
-				# pretending it is the first minute of the day, it should
-				# either go to the next day, or really I need to include 
-				# the first minute of each hour in my last hour count...
-                    hour = 0				
-					
-                if hour == last_hour:
-                    rain_str = items[2]
-                    rain += float(rain_str)
-                    last_hour = hour
-                    minute +=  1
-                    if minute == 60:
-                        minute = 0
-                        rain_string = str(rain)
-                        outFile.write( x + ',' + y + ',' + date + ' ' 
-                            + str(hour + 1) +':00:00"' + ',' + rain_string 
-                            + '\n')
-                else:
-                    minute = 1
-                    if int(clock.split(":")[0]) == 24:
-                        last_hour = 0
-                    else:
-                        last_hour = int(clock.split(":")[0])
-                    rain_str = items[2]
-                    rain = float(rain_str)
-
-    #LSPS is in an hour format already
-    x = '3529217'
-    y = '10245474'
-    print 'Starting on LSPS'
-
-    with open(LSPS, "r") as f:
-        # read the lines and skip 4 line header
-        lines = f.readlines()[4:]
-        for line in lines:
-            item = line.split(',');
-            outFile.write( x + ',' + y + ',' + item[0] + ',' + item[14] )
-
-#### Converting the rain data into a point shapefile ####
-
-hour_shp = arcpy.management.CreateFeatureclass(work_space, out_shp, 'POINT',
-    '', '', '', spatialref)
-
-arcpy.AddField_management(hour_shp,"Day", "DATE", "", "", "", "",
-    "NULLABLE","NON_REQUIRED","")
-# Might be better as int
-arcpy.AddField_management(hour_shp,"Hour", "SHORT", "", "", "", "",
-    "NULLABLE","NON_REQUIRED","")
-arcpy.AddField_management(hour_shp,"Rain_Total", "FLOAT", "", "", "", "",
-    "NULLABLE","NON_REQUIRED","")
-
-with open(r'./Hours_xy.txt', 'r') as inFile:
-    # variable 
+answer1 = raw_input(">   ")
 	
-    in_cur = arcpy.da.InsertCursor(hour_shp, 
-        ['SHAPE@', 'Day', 'Hour', 'Rain_Total'])
-
-    pnt = arcpy.Point()
-    #ary = arcpy.Array()
-	# skip header
-    next(inFile)
-	
-	# Goes through the txt file that was just created and uses the data 
-    # to create a point shapefile
-    for line in inFile:
-        rln = line.split(',')
-        pnt.X = int(rln[0])
-        pnt.Y = int(rln[1])
-        date = rln[2][1:11]
-        day = date + ' 12:00:00 PM'
-        time = rln[2].split(' ')[1]
-        hour = time.split(':')[0]
-        in_cur.insertRow((pnt, day, int(hour), rln[3]))
+if answer1 == "No" or answer1 == "no" or answer1 == "n":
+    print """
+Great!
+You will be asked to input the first and last date in the range you are 
+interested in, for example you might input 12-1-2015 for the first date 
+and 12-7-2015 for the last date.
+"""
+    # need to make a function 
+    print "Please input the first date in m-d-yyyy."
+    answer2 = raw_input(">   ")
+    print answer2
+    #items = answer2.split('-')
+    f_mounth, f_day, f_year = answer2.split('-')
+    fd = datetime.date(int(f_year), int(f_mounth), int(f_day))
+    ft = datetime.time(00,0,0)	
+    first_date = datetime.datetime.combine(fd, ft)
     
-del in_cur
-print 'done'
+    print "Is %s-%s-%s the date you wanted for the first date?" % (f_mounth, f_day, f_year)
+    answer3 = raw_input(">   ")
+    if answer3 == "No" or answer3 == "no":
+        # need to make a function 
+        print "Please input the first date in m-d-yyyy."
+        answer2 = raw_input(">   ")
+        #items = answer2.split('-')
+        f_mounth, f_day, f_year = answer2.split('-')
+        fd = datetime.date(int(f_year), int(f_mounth), int(f_day))
+        ft = datetime.time(00,0,0)	
+        first_date = datetime.datetime.combine(fd, ft)
+    else:
+        print "Great."
+
+    print "Please input the last date in m-d-yyyy."
+    answer4 = raw_input(">   ")
+    print answer4
+    #items = answer4.split('-')
+    l_mounth, l_day, l_year = answer4.split('-')
+    ld = datetime.date(int(l_year), int(l_mounth), int(l_day))
+    lt = datetime.time(00,0,0)
+    last_date = datetime.datetime.combine(ld, lt)    
+
+    print "Is %s-%s-%s the date you wanted for the last date?" % (l_mounth, l_day, l_year)
+    answer3 = raw_input(">   ")
+    if answer3 == "No" or answer3 == "no":
+        # need to make a function 
+        print "Please input the last date in m-d-yyyy."
+        answer5 = raw_input(">   ")
+        #items = answer2.split('-')
+        l_mounth, l_day, l_year = answer5.split('-')
+        ld = datetime.date(int(l_year), int(l_mounth), int(l_day))
+        lt = datetime.time(00,0,0)	
+        last_date = datetime.datetime.combine(ld, lt)
+    else:
+        print "Great."
+
+else:
+    print "This may take a while."
+    last_date = datetime.datetime.now() 
+    # could not get datetime.datetime(2014,09,24[,00[,00[,00[,00000[,None]]]]]) to work
+    d = datetime.date(2014,9,23)
+    t = datetime.time(00,0,0)
+    first_date = datetime.datetime.combine(d, t)
+		
+		
+i = first_date
+while i <= last_date :
+    dates.append(i)
+    new_date = i + one_day
+    #print new_date
+    i = new_date
+#print dates
+
+#s_cur = arcpy.da.SearchCursor(hours_xy, 
+#        ['Day', 'Hour', 'Rain_Total'])
+
+for date in dates:
+    for hour in hours:
+        query = "\"Day\" = date'" + str(date) +"' AND \"Hour\" = " + str(hour)
+        #print query
+        #try:
+        arcpy.Select_analysis( hours_xy, hour_shp, query)
+        my_mapdoc = arcpy.mapping.MapDocument(map_doc)
+            
+        for text in arcpy.mapping.ListLayoutElements(my_mapdoc, "TEXT_ELEMENT"): 
+            if text.text == "Text":
+                text.text = "Date: " + str(date.date()) + '\n' + "Hour: " + str(hour)
+            else:
+                pass
+        arcpy.RefreshActiveView() 
+        arcpy.RefreshTOC()
+        # Consider adding another layer where date folders are created and the hours are    
+        c_date = str(date.date())
+        map_output = work_space + "/Rain_Maps/Date" + c_date + "/rain_" + c_date + "_" + str(hour) + ".gif"
+        assure_path_exists(map_output)
+        
+        print map_output
+        arcpy.mapping.ExportToGIF(my_mapdoc, map_output)
+        del my_mapdoc
+            #print "Created Map for ", date, hour
+            #print "selected" , hour, date
+        #except:
+        #    print "Was unable to create map for", hour, date
+        #    print "Make sure the Rain_Maps folder is closed."
+        #    break #pass
+
