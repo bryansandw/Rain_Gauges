@@ -54,15 +54,23 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
 
             # need a local variable
             last_date = ""
-            minute = 0
+            minute = 1
             last_hour = 99
             rain = 0.00
 
             for line in lines:
                 items  = line.split(',')
                 date, clock = items[0].split()
-                hour = clock.split(":")[0]
-
+				#I am worried that this is the wrong way to han
+                if int(clock.split(":")[0]) != 24:
+                    hour = int(clock.split(":")[0])
+                else:
+				# This is miss handling the last minute of the day by 
+				# pretending it is the first minute of the day, it should
+				# either go to the next day, or really I need to include 
+				# the first minute of each hour in my last hour count...
+                    hour = 0				
+					
                 if hour == last_hour:
                     rain_str = items[2]
                     rain += float(rain_str)
@@ -71,12 +79,15 @@ with open(r'./Hours_xy.txt', 'w') as outFile:
                     if minute == 60:
                         minute = 0
                         rain_string = str(rain)
-                        outFile.write( x + ',' + y + ',' + date + ' ' + hour +
-                            ':00:00"' + ',' + rain_string + '\n')
-
+                        outFile.write( x + ',' + y + ',' + date + ' ' 
+                            + str(hour + 1) +':00:00"' + ',' + rain_string 
+                            + '\n')
                 else:
                     minute = 1
-                    last_hour = clock.split(":")[0]
+                    if int(clock.split(":")[0]) == 24:
+                        last_hour = 0
+                    else:
+                        last_hour = int(clock.split(":")[0])
                     rain_str = items[2]
                     rain = float(rain_str)
 
@@ -124,8 +135,9 @@ with open(r'./Hours_xy.txt', 'r') as inFile:
         pnt.Y = int(rln[1])
         date = rln[2][1:11]
         day = date + ' 12:00:00 PM'
-        hour = int(rln[2][12:14])
-        in_cur.insertRow((pnt, day, hour, rln[3]))
+        time = rln[2].split(' ')[1]
+        hour = time.split(':')[0]
+        in_cur.insertRow((pnt, day, int(hour), rln[3]))
     
 del in_cur
 print 'done'
