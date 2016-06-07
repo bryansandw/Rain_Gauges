@@ -1,8 +1,8 @@
 #############################################################################
 # Name: Elizabeth Rentschlar                                                #
 # Assistantce from: S. Boada                                                #
-# Purpose: Condense minute rain gauge readings in to hourly readings and    #
-#          merge into one text file that can then be used in the GIS        #
+# Purpose: Condense daily rain gauge readings in to one text file that      #
+#          allows for the user to easily compare rain by day                #
 # Created: 6/7/2016                                                         #
 # Copyright: (c) City of Bryan                                              #
 # Python Version: 2.7                                                       #
