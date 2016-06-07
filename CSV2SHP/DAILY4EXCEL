@@ -48,7 +48,6 @@ while i <= d_now:
 def get_rain(date, item_date, item_rain):
 	if item_date == date:
 		return(item_rain.rstrip('\n'))
-		break
 	else:
 		return('N/A')
 
@@ -67,14 +66,38 @@ with open('./Daily_Rainfall_Events.txt', 'w') as outFile:
 					item = line.split(',')
 					if station == "GolfCourse":
 						gc = get_rain(date, item[0],item[3])
+						if gc != 'N/A':
+							break
+						else:
+							continue
 					elif station == "Plant1":
 						p1 = get_rain(date, item[0],item[3])
+						if p1 != 'N/A':
+							break
+						else:
+							continue
 					elif station == "Luza":
 						lz = get_rain(date, item[0],item[3])
+						if lz != 'N/A':
+							break
+						else:
+							continue
 					elif station == "LiftStation":
 						ls = get_rain(date, item[0],item[3])
+						if ls != 'N/A':
+							break
+						else:
+							continue
 					elif station == "Burgess":
 						bg = get_rain(date, item[0],item[3])
+						if bg != 'N/A':
+							break
+						else:
+							continue
 					elif station == "LSPS":
-						lsps = get_rain(date, item[0],item[4])		
+						lsps = get_rain(date, item[0],item[4])	
+						if lsps != 'N/A':
+							break
+						else:
+							continue
 		outFile.write(str(date) + ',' + gc + ',' + p1 + ',' + lz + ',' + ls + ',' + bg + ',' + lsps + '\n')
