@@ -89,8 +89,8 @@ with open('./Daily_Rainfall_Events.txt', 'w') as outFile:
 							bg = "N/A"
 					elif station == "LSPS":
 						if item[0] == date:
-							p1 = item[4].rstrip('\n')
+							lsps = item[4].rstrip('\n')
 							break
 						else:
-							p1 = "N/A"			
-		outFile.write(str(date) + ',' + gc + ',' + p1 + ',' + lz + ',' + ls + ',' + bg + ',' + p1 + '\n')
+							lsps = "N/A"			
+		outFile.write(str(date) + ',' + gc + ',' + p1 + ',' + lz + ',' + ls + ',' + bg + ',' + lsps + '\n')
