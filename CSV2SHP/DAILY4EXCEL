@@ -44,6 +44,14 @@ while i <= d_now:
     new_date = i + one_day 
     i = new_date
 
+# Functions
+def get_rain(date, item_date, item_rain):
+	if item_date == date:
+		return(item_rain.rstrip('\n'))
+		break
+	else:
+		return('N/A')
+
 
 with open('./Daily_Rainfall_Events.txt', 'w') as outFile:
 
@@ -58,39 +66,15 @@ with open('./Daily_Rainfall_Events.txt', 'w') as outFile:
 				for line in lines:
 					item = line.split(',')
 					if station == "GolfCourse":
-						if item[0] == date:
-							gc = item[3].rstrip('\n')
-							break
-						else:
-							gc = "N/A"
+						gc = get_rain(date, item[0],item[3])
 					elif station == "Plant1":
-						if item[0] == date:
-							p1 = item[3].rstrip('\n')
-							break
-						else:
-							p1 = "N/A"
+						p1 = get_rain(date, item[0],item[3])
 					elif station == "Luza":
-						if item[0] == date:
-							lz = item[3].rstrip('\n')
-							break
-						else:
-							lz = "N/A"
+						lz = get_rain(date, item[0],item[3])
 					elif station == "LiftStation":
-						if item[0] == date:
-							ls = item[3].rstrip('\n')
-							break
-						else:
-							ls = "N/A"
+						ls = get_rain(date, item[0],item[3])
 					elif station == "Burgess":
-						if item[0] == date:
-							bg = item[3].rstrip('\n')
-							break
-						else:
-							bg = "N/A"
+						bg = get_rain(date, item[0],item[3])
 					elif station == "LSPS":
-						if item[0] == date:
-							lsps = item[4].rstrip('\n')
-							break
-						else:
-							lsps = "N/A"			
+						lsps = get_rain(date, item[0],item[4])		
 		outFile.write(str(date) + ',' + gc + ',' + p1 + ',' + lz + ',' + ls + ',' + bg + ',' + lsps + '\n')
