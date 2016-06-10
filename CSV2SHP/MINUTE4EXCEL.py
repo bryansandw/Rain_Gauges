@@ -1,17 +1,16 @@
 #############################################################################
 # Name: Elizabeth Rentschlar                                                #
-# Assistantce from:                                                         #
+# Assistantce from: S. Boada                                                #
 # Purpose: Condense minute rain gauge readings in to one text file that     #
 #          allows for the user to easily compare rain by day                #
 # Created: 6/9/2016                                                         #
 # Copyright: (c) City of Bryan                                              #
 # Python Version: 2.7                                                       #
 #############################################################################
-# soooooo inefficient!!!!!
-
 # Import module
 import datetime
 import os
+import numpy as np
 
 # set workspace
 work_space = 'G:\GIS_PROJECTS\WATER_SERVICES\Rain_Gauges'
@@ -32,6 +31,7 @@ table_list = [GolfCourse, Plant1, Luza, LiftStation, Burgess, LSPS]
 #xPos = ['3545415', '3557931', '3546713', '3558420', '3538420']
 #yPos = ['10218330', '10219830', '10227320', '10230450', '10203200']
 print_list = ["GolfCourse", "Plant1", "Luza", "LiftStation", "Burgess", "LSPS"]
+index_list = [0,1,2,3,4,5,6]
 
 #date list
 d_now = datetime.date.today()
@@ -41,6 +41,8 @@ minutes = [ "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "1
 #t = datetime.time(00,0,0)
 #date_now = datetime.datetime.combine(d_now, t) 
 #first_date = datetime.datetime.combine(d_first, t)
+
+
 
 i = d_first
 
@@ -53,8 +55,22 @@ while i <= d_now:
 				dates.append('"' + str(i) + " " + hour +':'+ minute +':00"')
 	new_date = i + one_day 
 	i = new_date
+	
+# Create an array to store the values in the text files in
+my_array = np.zeros((len(dates) + 1,), dtype=[('Date', 'a'),
+	('GolfCourse(in)', '<u4'),
+	('Plant1(in)', '<u4'),
+	('Luza(in)', '<u4'),
+	('LiftStation(in)', '<u4'),
+	('Burgess(in)', '<u4'),
+	('LSPS(in)', '<u4'),
+])
 
-
+#Go through and assign the dates and times to the first column of the array
+for date in dates:
+	my_array[dates.index(date)][0] = date
+	
+'''
 with open('./Minute_Rainfall_Events.txt', 'w') as outFile:
 
     # Create Headers in Output Text File
@@ -104,4 +120,4 @@ with open('./Minute_Rainfall_Events.txt', 'w') as outFile:
 						else:
 							lsps = "N/A"			
 		outFile.write(str(date) + ',' + gc + ',' + p1 + ',' + lz + ',' + ls + ',' + bg + ',' + lsps + '\n')
-
+'''
