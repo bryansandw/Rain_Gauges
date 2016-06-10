@@ -31,7 +31,7 @@ table_list = [GolfCourse, Plant1, Luza, LiftStation, Burgess, LSPS]
 #xPos = ['3545415', '3557931', '3546713', '3558420', '3538420']
 #yPos = ['10218330', '10219830', '10227320', '10230450', '10203200']
 print_list = ["GolfCourse", "Plant1", "Luza", "LiftStation", "Burgess", "LSPS"]
-index_list = [0,1,2,3,4,5,6]
+index_list = [1,2,3,4,5,6]
 
 #date list
 d_now = datetime.date.today()
@@ -69,6 +69,23 @@ my_array = np.zeros((len(dates) + 1,), dtype=[('Date', 'a'),
 #Go through and assign the dates and times to the first column of the array
 for date in dates:
 	my_array[dates.index(date)][0] = date
+	
+	
+
+print my_array
+
+#open the txt files and 
+
+for f, station in zip(table_list, index_list):
+	with open(f, "r") as f:
+    # read the lines and skip 4 line header		
+		lines = f.readlines()[4:] 
+		for line in lines:
+			item = line.split(',')
+			try:
+				my_array[dates.index(item[0])][station] = item[2].rstrip('\n')
+			except:
+				print "Didin't work", f, station, item[0]
 	
 '''
 with open('./Minute_Rainfall_Events.txt', 'w') as outFile:
