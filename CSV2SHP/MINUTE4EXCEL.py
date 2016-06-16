@@ -27,8 +27,6 @@ Burgess = './Burgess LS_Minute.txt'
 LSPS = './LSPS Weather_Hour.txt'
 
 table_list = [GolfCourse, Plant1, Luza, LiftStation, Burgess, LSPS]
-#xPos = ['3545415', '3557931', '3546713', '3558420', '3538420']
-#yPos = ['10218330', '10219830', '10227320', '10230450', '10203200']
 print_list = ["GolfCourse", "Plant1", "Luza", "LiftStation", "Burgess", "LSPS"]
 
 #date list
@@ -36,14 +34,9 @@ d_now = datetime.date.today()
 d_first = datetime.date(2015,4,20)
 hours = [ "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"] 
 minutes = [ "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59" ] 
-#t = datetime.time(00,0,0)
-#date_now = datetime.datetime.combine(d_now, t) 
-#first_date = datetime.datetime.combine(d_first, t)
 
-
-
+# create a list of the dates between 4-20-2016 and today
 i = d_first
-
 while i <= d_now:
 	for hour in hours:
 		for minute in minutes:
