@@ -30,7 +30,6 @@ table_list = [GolfCourse, Plant1, Luza, LiftStation, Burgess, LSPS]
 #xPos = ['3545415', '3557931', '3546713', '3558420', '3538420']
 #yPos = ['10218330', '10219830', '10227320', '10230450', '10203200']
 print_list = ["GolfCourse", "Plant1", "Luza", "LiftStation", "Burgess", "LSPS"]
-index_list = [1,2,3,4,5,6]
 
 #date list
 d_now = datetime.date.today()
@@ -66,13 +65,9 @@ my_array = np.zeros((len(dates),), dtype=[('Date', 'a', 21),
 ])
 
 #Go through and assign the dates and times to the first column of the array
+my_array.fill(-9999.9)
 my_array['Date'] = dates
-my_array['GolfCourse'] = -9999.9
-my_array['Plant1'] = -9999.9
-my_array['Luza'] = -9999.9
-my_array['LiftStation'] = -9999.9
-my_array['Burgess'] = -9999.9
-my_array['LSPS'] = -9999.9
+
 print my_array[2]	
 print my_array[200]
 
@@ -84,14 +79,11 @@ for f, station in zip(table_list, print_list):
 		lines = f.readlines()[4:] 
 		for line in lines:
 			item = line.split(',')
-			try:
-				if station == 'LSPS':
-					my_array[dates.index(item[0])][station] = item[14].rstrip('\n')
-				else:
-					my_array[dates.index(item[0])][station] = item[2].rstrip('\n')
-			except:
-				pass
-				#print "Didin't work", f, station, item[0]
+			if station == 'LSPS':
+				my_array[dates.index(item[0])][station] = item[14].rstrip('\n')
+			else:
+				my_array[dates.index(item[0])][station] = item[2].rstrip('\n')
+
 
 print my_array[2]	
 print my_array[200]				
