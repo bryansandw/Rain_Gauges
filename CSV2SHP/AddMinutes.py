@@ -99,11 +99,11 @@ print my_array[200]
 
 with open(doc, 'a') as outFile:
     for date in new_dates:
-        day_time = my_array[dates.index(date)][0].strip("'")
-        golf = str(my_array[dates.index(date)][1])
-        plant = str(my_array[dates.index(date)][2])
-        luz = str(my_array[dates.index(date)][3])
-        lif_sta = str(my_array[dates.index(date)][4])
-        bur = str(my_array[dates.index(date)][5])
-        low_pump = str(my_array[dates.index(date)][6]) 
+        day_time = my_array[new_dates.index(date)][0].strip("'")
+        golf = str(my_array[new_dates.index(date)][1])
+        plant = str(my_array[new_dates.index(date)][2])
+        luz = str(my_array[new_dates.index(date)][3])
+        lif_sta = str(my_array[new_dates.index(date)][4])
+        bur = str(my_array[new_dates.index(date)][5])
+        low_pump = str(my_array[new_dates.index(date)][6]) 
         outFile.write(day_time + ', '+ golf + ', ' + plant + ', ' + luz + ', ' + lif_sta + ', ' + bur + ', ' + low_pump + '\n')
