@@ -79,14 +79,14 @@ for f, station in zip(table_list, print_list):
         lines = f.readlines()[4:] 
         for line in lines:
             item = line.split(',')
-            if station == 'LSPS':
-                my_array[dates.index(item[0])][station] = item[14].rstrip('\n')
-            else:
-                try:
+            try:
+                if station == 'LSPS':
+                    my_array[dates.index(item[0])][station] = item[14].rstrip('\n')
+                else:
                     my_array[dates.index(item[0])][station] = item[2].rstrip('\n')
-                except BadDate:
-                    print item[0] + " bad"
-                    pass
+            except BadDate:
+                print item[0] + " bad"
+                pass
 
 
 print my_array[2]	
