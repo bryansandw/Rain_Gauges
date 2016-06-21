@@ -84,7 +84,7 @@ for f, station in zip(table_list, print_list):
                     my_array[dates.index(item[0])][station] = item[14].rstrip('\n')
                 else:
                     my_array[dates.index(item[0])][station] = item[2].rstrip('\n')
-            except BadDate:
+            except: # need to define BadDate
                 print item[0] + " bad"
                 pass
 
